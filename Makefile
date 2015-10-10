@@ -20,7 +20,7 @@ $(PARSER) : $(SRC_DIR)/Parser.fsy $(LEXER) $(PKG_DIR)
 	mono $(FSYACC) -o $@ --module Parser -v $<
 
 $(PKG_DIR) :
-	nuget restore negation.sln
+	nuget restore refinements.sln
 
 clean :
 	xbuild $(SOLN) /t:clean
