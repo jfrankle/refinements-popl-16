@@ -9,7 +9,11 @@ Steve Zdancewic     (University of Pennsylvania)
 0: DEPENDENCIES
 --------------------------------------------------------------------------------
 This repository requires several other packages to run.  On Ubuntu:
-mono-devel, xbuild, nuget, fsharp
+make, mono-devel, nuget, fsharp
+
+To download the proper nuget packages, you might need to update your
+certificates:
+> mozroots --import --sync
 
 
 1: INTRODUCTION
