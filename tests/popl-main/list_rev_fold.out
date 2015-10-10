@@ -1,0 +1,5 @@
+(* Generated Thu Oct  8 20:40:57 2015 *)
+fun (l1:list) ->
+  ((fold l1) (fun (l2:list) ->
+    fun (n1:nat) ->
+      Cons (n1, l2))) Nil

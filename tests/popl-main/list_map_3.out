@@ -1,0 +1,6 @@
+(* Generated Thu Oct  8 20:41:03 2015 *)
+fix f1 (l1:list) : (nat -> nat) -> list ->
+  fix f2 (f3:nat -> nat) : list ->
+    match l1 with
+    | Nil u1 -> Nil
+    | Cons t1 -> Cons (f3 (#1 t1), (f1 (#2 t1)) f3)

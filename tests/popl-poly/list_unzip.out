@@ -1,0 +1,7 @@
+(* Generated Thu Oct  8 20:27:06 2015 *)
+fix f1 (l1:'a * 'b list) : 'a list * 'b list ->
+  (match l1 with
+  | Nil u1 -> Nil
+  | Cons t1 -> Cons (#1 (#1 t1), #1 (f1 (#2 t1))), match l1 with
+  | Nil u1 -> Nil
+  | Cons t1 -> Cons (#2 (#1 t1), #2 (f1 (#2 t1))))

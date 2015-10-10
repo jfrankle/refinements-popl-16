@@ -1,0 +1,146 @@
+xbuild negation.sln /t:clean
+XBuild Engine Version 12.0
+Mono, Version 4.0.1.0
+Copyright (C) 2005-2013 Various Mono authors
+
+Build started 7/1/2015 5:54:57 PM.
+__________________________________________________
+/home/jonathan/Desktop/synthesis/src/negation/negation.sln:  warning : Don't know how to handle GlobalSection Performance, Ignoring.
+Project "/home/jonathan/Desktop/synthesis/src/negation/negation.sln" (clean target(s)):
+	Target ValidateSolutionConfiguration:
+		Building solution configuration "Debug|Any CPU".
+	Target Clean:
+		Project "/home/jonathan/Desktop/synthesis/src/negation/negation/negation.fsproj" (Clean target(s)):
+			Target CoreClean:
+				Deleting file '/home/jonathan/Desktop/synthesis/src/negation/negation/Lexer.fs'
+				Deleting file '/home/jonathan/Desktop/synthesis/src/negation/negation/Parser.fs'
+				Deleting file '/home/jonathan/Desktop/synthesis/src/negation/negation/bin/Debug/negation.exe.config'
+				Deleting file '/home/jonathan/Desktop/synthesis/src/negation/negation/bin/Debug/negation.exe.mdb'
+				Deleting file '/home/jonathan/Desktop/synthesis/src/negation/negation/bin/Debug/negation.exe'
+				Deleting file '/home/jonathan/Desktop/synthesis/src/negation/negation/obj/Debug/negation.exe'
+				Deleting file '/home/jonathan/Desktop/synthesis/src/negation/negation/obj/Debug/negation.exe.mdb'
+				Deleting file '/home/jonathan/Desktop/synthesis/src/negation/negation/bin/Debug/FSharp.Core.dll'
+				Deleting file '/home/jonathan/Desktop/synthesis/src/negation/negation/bin/Debug/FSharpx.Collections.dll'
+				Deleting file '/home/jonathan/Desktop/synthesis/src/negation/negation/bin/Debug/FsLexYacc.Runtime.dll'
+				Deleting file '/home/jonathan/Desktop/synthesis/src/negation/negation/obj/Debug/negation.fsproj.FilesWrittenAbsolute.txt'
+		Done building project "/home/jonathan/Desktop/synthesis/src/negation/negation/negation.fsproj".
+Done building project "/home/jonathan/Desktop/synthesis/src/negation/negation.sln".
+
+Build succeeded.
+
+Warnings:
+
+/home/jonathan/Desktop/synthesis/src/negation/negation.sln:  warning : Don't know how to handle GlobalSection Performance, Ignoring.
+
+	 1 Warning(s)
+	 0 Error(s)
+
+Time Elapsed 00:00:00.2330390
+rm -rf negation/Parser.fsi negation/Parser.fsyacc.output
+mono packages/FsLexYacc.6.1.0/build/fslex.exe -o negation/Lexer.fs --unicode negation/Lexer.fsl
+compiling to dfas (can take a while...)
+35 states
+writing output
+mono packages/FsLexYacc.6.1.0/build/fsyacc.exe -o negation/Parser.fs --module Parser -v negation/Parser.fsy
+building tables
+computing first function...time: 00:00:00.0304667
+building kernels...time: 00:00:00.0234879
+building kernel table...time: 00:00:00.0086432
+computing lookahead relations..................................................................................................................................................................time: 00:00:00.0229625
+building lookahead table...time: 00:00:00.0066007
+building action table...state 140: shift/reduce error on PIPE
+time: 00:00:00.0128486
+building goto table...time: 00:00:00.0094833
+returning tables.
+1 shift/reduce conflicts
+writing tables to log
+159 states
+29 nonterminals
+39 terminals
+76 productions
+#rows in action table: 159
+xbuild negation.sln /p:Configuration=Release
+XBuild Engine Version 12.0
+Mono, Version 4.0.1.0
+Copyright (C) 2005-2013 Various Mono authors
+
+Build started 7/1/2015 5:54:58 PM.
+__________________________________________________
+/home/jonathan/Desktop/synthesis/src/negation/negation.sln:  warning : Don't know how to handle GlobalSection Performance, Ignoring.
+Project "/home/jonathan/Desktop/synthesis/src/negation/negation.sln" (default target(s)):
+	Target ValidateSolutionConfiguration:
+		Building solution configuration "Release|Any CPU".
+	Target Build:
+		Project "/home/jonathan/Desktop/synthesis/src/negation/negation/negation.fsproj" (default target(s)):
+			Target PrepareForBuild:
+				Configuration: Debug Platform: AnyCPU
+			Target CopyFilesMarkedCopyLocal:
+				Copying file from '/home/jonathan/Desktop/synthesis/src/negation/packages/FSharp.Core.3.1.2.1/lib/net40/FSharp.Core.dll' to '/home/jonathan/Desktop/synthesis/src/negation/negation/bin/Debug/FSharp.Core.dll'
+				Copying file from '/home/jonathan/Desktop/synthesis/src/negation/packages/FSharpx.Collections.1.11.0/lib/net40/FSharpx.Collections.dll' to '/home/jonathan/Desktop/synthesis/src/negation/negation/bin/Debug/FSharpx.Collections.dll'
+				Copying file from '/home/jonathan/Desktop/synthesis/src/negation/packages/FsLexYacc.Runtime.6.1.0/lib/net40/FsLexYacc.Runtime.dll' to '/home/jonathan/Desktop/synthesis/src/negation/negation/bin/Debug/FsLexYacc.Runtime.dll'
+			Target GenerateSatelliteAssemblies:
+			No input files were specified for target GenerateSatelliteAssemblies, skipping.
+			Target CallFsLex:
+			Skipping target "CallFsLex" because its outputs are up-to-date.
+			Target CallFsYacc:
+			Skipping target "CallFsYacc" because its outputs are up-to-date.
+			Target CoreCompile:
+				Tool /usr/lib/cli/fsharp/fsc.exe execution started with arguments: -o:obj/Debug/negation.exe -g --debug:full --noframework --define:DEBUG --define:TRACE --doc:bin/Debug/negation.XML --optimize- --tailcalls- --platform:anycpu -r:../packages/FSharp.Core.3.1.2.1/lib/net40/FSharp.Core.dll -r:../packages/FSharpx.Collections.1.11.0/lib/net40/FSharpx.Collections.dll -r:../packages/FsLexYacc.Runtime.6.1.0/lib/net40/FsLexYacc.Runtime.dll -r:/usr/lib/mono/4.5/mscorlib.dll -r:/usr/lib/mono/4.5/System.dll -r:/usr/lib/mono/4.5/System.Numerics.dll -r:/usr/lib/mono/4.5/System.Core.dll --target:exe --warn:3 --warnaserror:76 --fullpaths --flaterrors --highentropyva- util.fs lang.fs Parser.fsi Parser.fs Lexer.fs refns.fs skeletont.fs library.fs typecheck.fs eval.fs skeleton.fs focusctx.fs sequent.fs sampleaot.fs normalize.fs samplejit.fs genr.fs judgment.fs synthdriver.fs run.fs main.fs 
+				F# Compiler for F# 3.1 (Open Source Edition)
+				Freely distributed under the Apache 2.0 Open Source License
+			Target _CopyAppConfigFile:
+				Copying file from '/home/jonathan/Desktop/synthesis/src/negation/negation/App.config' to '/home/jonathan/Desktop/synthesis/src/negation/negation/bin/Debug/negation.exe.config'
+			Target DeployOutputFiles:
+				Copying file from '/home/jonathan/Desktop/synthesis/src/negation/negation/obj/Debug/negation.exe.mdb' to '/home/jonathan/Desktop/synthesis/src/negation/negation/bin/Debug/negation.exe.mdb'
+				Copying file from '/home/jonathan/Desktop/synthesis/src/negation/negation/obj/Debug/negation.exe' to '/home/jonathan/Desktop/synthesis/src/negation/negation/bin/Debug/negation.exe'
+		Done building project "/home/jonathan/Desktop/synthesis/src/negation/negation/negation.fsproj".
+Done building project "/home/jonathan/Desktop/synthesis/src/negation/negation.sln".
+
+Build succeeded.
+
+Warnings:
+
+/home/jonathan/Desktop/synthesis/src/negation/negation.sln:  warning : Don't know how to handle GlobalSection Performance, Ignoring.
+
+	 1 Warning(s)
+	 0 Error(s)
+
+Time Elapsed 00:00:08.6271470
+bool_band,165,NaN
+bool_bor,159,NaN
+bool_impl,158,NaN
+bool_neg,154,NaN
+bool_xor,160,NaN
+append,261,0.000000
+list_compress,44627,0.314638
+list_concat,297,0.831438
+drop,333,0.000000
+even_parity,280,0.000000
+list_filter,timeout
+list_fst,241,0.000000
+hd,196,NaN
+incify,250,0.273543
+last,242,0.027397
+length,215,0.000000
+map,timeout
+list_map_big,timeout
+list_map_big,timeout
+list_nth,640,0.000000
+rev,3242,0.918389
+rev,442,0.864113
+rev,320,0.822581
+snoc,254,0.016129
+list_sort_sorted_insert,346,0.819005
+list_sorted_insert,2880,0.223923
+stutter,222,0.000000
+sum,439,0.931964
+tl,207,NaN
+take,16649,0.000000
+list_tuple_sum,376,0.854502
+list_tuple_swap,219,0.000000
+unzip,200,0.127551
+div2,215,0.000000
+iseven,197,0.000000
+max,242,0.197917
+pred,162,NaN
+sum,210,0.000000

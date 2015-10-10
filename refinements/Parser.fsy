@@ -1,0 +1,314 @@
+﻿//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// HEADER
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+%{
+open Synth.Lang
+
+let rec expr_of_int (n:int) : expr =
+    if n = 0 then HC.ector("Z", HC.eunit) else HC.ector("S", expr_of_int (n-1))
+
+let rec refn_of_int (n:int) : refn_ext =
+    if n = 0 then RECtor("Z", REUnit) else RECtor("S", refn_of_int (n-1))
+
+let rec expr_of_list (ls:expr list) : expr =
+    match ls with
+    | hd :: tl -> HC.ector("Cons", HC.etup[hd; expr_of_list tl])
+    | []       -> HC.ector("Nil", HC.eunit)
+
+let rec refn_of_list (ls:refn_ext list) : refn_ext =
+    match ls with
+    | hd :: tl -> RECtor("Cons", RETup[hd; refn_of_list tl])
+    | []       -> RECtor("Nil", REUnit)
+
+// Expression declaration.
+let make_expr_decl (fix:bool) (name:id) (args:(id * typ) list) (t:typ) (e:expr) =
+    if args.Length = 0 then DLibrary(name, e)
+    else
+        let rec inner_funs args =
+            match args with
+            | (x,t)::tl -> HC.efun{argl=x; arg_type=t; body=inner_funs tl}
+            | []        -> e
+        let rec fix_typ ls =
+            match ls with
+            | (_, t'):: tl -> HC.tarr(t', fix_typ tl)
+            | []           -> t
+
+        let func = if fix then HC.efix {name=name; argf=fst args.Head; arg_type=snd args.Head;
+                                        ret_type=fix_typ args.Tail; body=inner_funs args.Tail}
+                   else        HC.efun {argl=fst args.Head; arg_type=snd args.Head;
+                                        body=inner_funs args.Tail}        
+        DLibrary(name, func)
+
+// Append a declaration to a synth problem
+let app_decl sp d = {sp with declarations = d :: sp.declarations }
+let rev_decls sp  = {sp with declarations = List.rev sp.declarations }
+
+%}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TOKENS
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%token <int>    INT
+%token <string> LID
+%token <string> UID
+%token <int>    PROJ
+%token <string> TICK
+
+%token FUN         // fun
+%token MATCH       // match
+%token TYPE        // type
+%token OF          // of
+%token LET         // let
+%token REC         // rec
+%token UNIT        // unit
+%token NOT         // not
+%token WITH        // with
+
+%token HOLE        // ?
+%token REFINES     // |>
+%token EQUAL       // =
+%token ARROW       // ->
+%token COMMA       // ,
+%token COLON       // :
+%token STAR        // *
+%token PIPE        // |
+%token LPAREN      // (
+%token RPAREN      // )
+%token LBRACKET    // [
+%token RBRACKET    // ]
+%token SEMI        // ;
+%token AND         // /\
+%token OR          // \/
+
+%token P1
+%token P2
+%token P3
+%token P4
+
+%token CTOR_ARG
+%token CTOR_ALONE
+%token TUP
+
+%token EOF
+
+%start start
+%type <Synth.Lang.synth_problem> start
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// PRECEDENCE
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%right    ARROW
+%nonassoc TUP_STAR
+%nonassoc CTOR_ALONE
+%nonassoc CTOR_ARG
+
+%nonassoc MATCH_PREC
+%nonassoc FUN_PREC
+%nonassoc APP_PREC
+%nonassoc CTOR_PREC
+
+%%
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TOP LEVEL TOKEN
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+start :
+     | decls { $1 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// DECLARATIONS
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+decls:
+    // Type decls.
+    | TYPE LID EQUAL type_ctor_one decls
+	          { app_decl $5 (DDatatype($2, [], $4)) }
+    | TYPE TICK LID EQUAL type_ctor_one decls
+	          { app_decl $6 (DDatatype($3, [$2], $5)) }
+    | TYPE LPAREN tick_comma_one RPAREN LID EQUAL type_ctor_one decls
+	          { app_decl $8 (DDatatype($5, $3, $7)) }
+
+    // Non-recursive let decl.
+    | LET     LID args_list_one COLON typ EQUAL expr SEMI SEMI decls
+	          { app_decl $10 (make_expr_decl false $2 (List.rev $3) $5 $7) }
+
+	// Recursive let decl.
+    | let_rec_head args_list_one COLON typ EQUAL expr SEMI SEMI decls
+	          { app_decl $9 (make_expr_decl true $1 (List.rev $2) $4 $6) }
+
+	// Recursive synthesis problem.
+    | let_rec_head COLON typ REFINES refn EQUAL HOLE
+	          {{declarations=[]; synth_name=$1; synth_type=$3; synth_refn=Some $5; is_rec=true}}
+
+	// Recursive synthesis problem.
+    | let_rec_head COLON typ EQUAL HOLE
+	          {{declarations=[]; synth_name=$1; synth_type=$3; synth_refn=None; is_rec=true}}
+	
+	// No-argument let decl.
+	| let_head EQUAL expr SEMI SEMI decls
+	          { app_decl $6 (make_expr_decl false (fst $1) [] (snd $1) $3)}
+
+	// Synthesis problem.
+    | let_head REFINES refn EQUAL HOLE
+	          {{declarations=[]; synth_name=fst $1; synth_type=snd $1; synth_refn=Some $3; is_rec=false}}
+
+	// Synthesis problem.
+    | let_head EQUAL HOLE
+	          {{declarations=[]; synth_name=fst $1; synth_type=snd $1; synth_refn=None; is_rec=false}}
+
+type_ctor_one: // NOTE: reversed
+    | type_ctor               { [$1]     }
+	| type_ctor_one type_ctor { $2 :: $1 }
+type_ctor:
+    | PIPE UID OF typ         { ($2, $4)   }
+	| PIPE UID                { ($2, HC.tunit)}
+
+// A comma-separated list of ticks (at least one).
+tick_comma_one :
+    | tick_comma COMMA TICK { List.rev ($3 :: $1) }
+
+// A comma-separated list of ticks.
+tick_comma :  // NOTE: reversed
+    | TICK                  { [$1]        }
+	| tick_comma COMMA TICK { $3 :: $1    }
+
+arg:
+    | LPAREN LID COLON typ RPAREN { ($2, $4) }
+args_list_one: // NOTE: reversed
+    | arg               { [$1]     }
+	| args_list_one arg { $2 :: $1 }
+let_head:
+    | LET LID COLON typ { ($2, $4) }
+let_rec_head:
+    | LET REC LID { $3 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// REFINEMENTS
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+refn :
+    | INT                              { refn_of_int $1     }
+	| LBRACKET refn_semi RBRACKET      { refn_of_list $2    }  
+	| NOT LPAREN refn RPAREN           { RENot($3)          }
+	| AND LPAREN refn_comma RPAREN     { REAnd($3)          }
+	| OR  LPAREN refn_comma RPAREN     { REOr ($3)          }
+	| refn ARROW refn                  { REArrA($1, $3)     }                   
+    | LPAREN RPAREN                    { REUnit             }
+	| LPAREN refn RPAREN               { $2                 }
+	| LPAREN refn_comma_one RPAREN     { RETup($2)          }
+	| UID refn  %prec CTOR_ARG         { RECtor($1, $2)     }
+	| UID       %prec CTOR_ALONE       { RECtor($1, REUnit) }
+	| LID                              { REBase($1)         }
+	| TICK                             { REPTop($1)         }
+
+// A comma-separated list of refinements (at least one).
+refn_comma_one :
+    | refn_comma COMMA refn { List.rev ($3 :: $1) }
+
+// A comma-separated list of refinements.
+refn_comma :  // NOTE: reversed
+    | refn                  { [$1]        }
+	| refn_comma COMMA refn { $3 :: $1    }
+
+// A semicolon-separated list of refinements.
+refn_semi :
+    | refn_semi2            { List.rev $1 }
+	|                       { []          }
+refn_semi2 :
+    | refn                  { [$1]        }
+	| refn_semi2 SEMI refn  { $3 :: $1    }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// TYPES
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+typ :
+    | UNIT               { HC.tunit        }
+	| typ ARROW typ      { HC.tarr($1, $3) }
+	| typ_base           { $1              }
+	| TICK               { HC.tpoly($1)    }
+	| typ_star_one       { HC.ttup($1)     }
+	| LPAREN typ RPAREN  { $2           }
+
+typ_in_tup :
+    | UNIT               { HC.tunit        }
+    | TICK               { HC.tpoly($1)    }
+	| typ_base           { $1              }
+	| LPAREN typ RPAREN  { $2              }
+
+typ_base :
+    | LID                   { HC.tbase($1, [])            }
+	| LID LID               { HC.tbase($2, [HC.tbase($1, [])]) }
+	| UNIT LID              { HC.tbase($2, [HC.tunit])    }
+	| TICK LID              { HC.tbase($2, [HC.tpoly $1]) }
+	| LPAREN typ RPAREN LID { HC.tbase($4, [$2])          }
+	| LPAREN typ_comma_one RPAREN LID { HC.tbase($4, $2)  }
+
+typ_star_one :
+    | typ_star STAR typ_in_tup  { List.rev ($3 :: $1) }
+typ_star : // Reversed
+    | typ_in_tup                { [$1]                }
+	| typ_star STAR typ_in_tup  { $3 :: $1            }
+
+// A comma-separated list of types (at least one).
+typ_comma_one :
+    | typ_comma COMMA typ { List.rev ($3 :: $1) }
+
+// A comma-separated list of types.
+typ_comma :  // NOTE: reversed
+    | typ                 { [$1]        }
+	| typ_comma COMMA typ { $3 :: $1    }
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// EXPRESSIONS
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+expr :
+    | expr_p1 %prec P1 { $1 }
+	| expr_p2 %prec P2 { $1 }
+	| UID     %prec p3 { HC.ector($1, HC.eunit) }
+
+expr_p2 :
+        | LPAREN RPAREN                { HC.eunit           }
+		| LID                          { HC.evar $1         }
+		| LPAREN expr_comma_one RPAREN { HC.etup $2         }
+		| LPAREN expr RPAREN           { $2              }
+	    | INT                          { expr_of_int  $1 }
+	    | LBRACKET RBRACKET            { expr_of_list [] }
+	    | LBRACKET expr_semi RBRACKET  { expr_of_list $2 }
+
+expr_p1 :
+        | PROJ expr_p2                 { HC.eproj($1, $2) }
+		| ctor_chain                   { $1            }
+		| app_chain                    { $1            }
+		| FUN arg ARROW expr           { HC.efun {argl=fst $2; arg_type=snd $2; body=$4}}
+	    | MATCH expr WITH branches     { HC.ematch($2, $4)  }
+
+app_chain :
+    | expr_p2   expr_p2 { HC.eapp($1, $2) }
+	| app_chain expr_p2 { HC.eapp($1, $2) }
+ctor_chain :
+    | UID UID           { HC.ector($1, HC.ector($2, HC.eunit))}
+    | UID expr_p2       { HC.ector($1, $2)}
+	| UID ctor_chain    { HC.ector($1, $2)}
+
+// The branches for a match statement.
+branches :  // NOTE: reversed
+     | branches branch     { $2 :: $1 }
+	 |                     { []       }
+branch :
+     | PIPE UID LID ARROW expr {($2, $3, $5)}
+
+// A comma-separated list of expressions (at least one).
+expr_comma_one :
+    | expr_comma COMMA expr { List.rev ($3 :: $1) }
+
+// A comma-separated list of expressions.
+expr_comma :  // NOTE: reversed
+    | expr                  { [$1]        }
+	| expr_comma COMMA expr { $3 :: $1    }
+
+// A semicolon-separated list of expressions.
+expr_semi :
+    | expr_semi2            { List.rev $1 }
+expr_semi2 :  // NOTE: reversed
+    | expr                  { [$1]        }
+	| expr_semi2 SEMI expr  { $3 :: $1    }

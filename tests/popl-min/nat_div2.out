@@ -1,0 +1,7 @@
+(* Generated Thu Oct  8 20:38:27 2015 *)
+fix f1 (n1:nat) : nat ->
+  match n1 with
+  | Z u1 -> Z
+  | S n2 -> match n2 with
+    | Z u1 -> Z
+    | S n3 -> S (f1 n3)

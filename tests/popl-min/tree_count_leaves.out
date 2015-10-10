@@ -1,0 +1,5 @@
+(* Generated Thu Oct  8 20:38:40 2015 *)
+fix f1 (t1:tree) : nat ->
+  match t1 with
+  | Leaf u1 -> S Z
+  | Node t2 -> (sum (f1 (#3 t2))) (f1 (#1 t2))

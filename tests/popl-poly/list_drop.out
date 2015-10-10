@@ -1,0 +1,8 @@
+(* Generated Thu Oct  8 20:27:06 2015 *)
+fix f1 (l1:'a list) : nat -> 'a list ->
+  fix f2 (n1:nat) : 'a list ->
+    match n1 with
+    | Z u1 -> l1
+    | S n2 -> match l1 with
+      | Nil u1 -> Nil
+      | Cons t1 -> (f1 (#2 t1)) n2

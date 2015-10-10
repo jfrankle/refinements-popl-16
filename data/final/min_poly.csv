@@ -1,0 +1,15 @@
+list_append,88,210,0.095607
+list_drop,59,220,0.121702
+list_filter,66,215,0.150150
+list_fst,40,195,0.114583
+list_hd,14,149,NaN
+list_last,23,195,0.129032
+list_length,28,194,0.136364
+list_map,22,195,0.065041
+list_nth,51,216,0.151888
+list_snoc,46,195,0.079439
+list_stutter,43,196,0.120690
+list_take,67,243,0.122244
+list_tl,26,159,NaN
+list_tuple_swap,46,197,0.111111
+list_unzip,58,200,0.253623

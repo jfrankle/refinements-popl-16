@@ -1,0 +1,9 @@
+(* Generated Thu Oct  8 20:40:51 2015 *)
+fix f1 (l1:list) : bool ->
+  match l1 with
+  | Nil u1 -> True
+  | Cons t1 -> match f1 (#2 t1) with
+    | True u1 -> match #1 t1 with
+      | True u2 -> False
+      | False u2 -> True
+    | False u1 -> #1 t1

@@ -1,0 +1,6 @@
+(* Generated Thu Oct  8 20:40:50 2015 *)
+fix f1 (l1:list) : list -> list ->
+  fix f2 (l2:list) : list ->
+    match l1 with
+    | Nil u1 -> l2
+    | Cons t1 -> Cons (#1 t1, (f1 (#2 t1)) l2)

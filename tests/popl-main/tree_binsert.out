@@ -1,0 +1,9 @@
+(* Generated Thu Oct  8 20:41:13 2015 *)
+fix f1 (t1:tree) : nat -> tree ->
+  fix f2 (n1:nat) : tree ->
+    match t1 with
+    | L u1 -> N (L, n1, L)
+    | N t2 -> match (comp_nat n1) (#2 t2) with
+      | CEq u1 -> N (#1 t2, n1, #3 t2)
+      | CGt u1 -> N (#1 t2, #2 t2, (f1 (#3 t2)) n1)
+      | CLt u1 -> N ((f1 (#1 t2)) n1, #2 t2, #3 t2)

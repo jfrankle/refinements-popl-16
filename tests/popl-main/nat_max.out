@@ -1,0 +1,7 @@
+(* Generated Thu Oct  8 20:40:44 2015 *)
+fun (n1:nat) ->
+  fun (n2:nat) ->
+    match (compare n2) n1 with
+    | LT u1 -> n1
+    | EQ u1 -> n2
+    | GT u1 -> n2

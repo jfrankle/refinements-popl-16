@@ -1,0 +1,5 @@
+(* Generated Thu Oct  8 20:38:24 2015 *)
+fun (n1:nat) ->
+  match n1 with
+  | Z u1 -> Z
+  | S n2 -> n2

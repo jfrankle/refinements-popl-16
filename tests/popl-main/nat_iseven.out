@@ -1,0 +1,7 @@
+(* Generated Thu Oct  8 20:41:01 2015 *)
+fix f1 (n1:nat) : bool ->
+  match n1 with
+  | Z u1 -> True
+  | S n2 -> match f1 n2 with
+    | True u1 -> False
+    | False u1 -> True

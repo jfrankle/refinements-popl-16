@@ -1,0 +1,5 @@
+(* Generated Thu Oct  8 20:27:07 2015 *)
+fun (l1:'a list) ->
+  match l1 with
+  | Nil u1 -> None
+  | Cons t1 -> Some (#1 t1)

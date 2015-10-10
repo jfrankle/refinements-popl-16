@@ -1,0 +1,85 @@
+﻿{
+
+module Lexer
+open Parser
+open Microsoft.FSharp.Text.Lexing
+exception LexErr of string
+let lexeme = LexBuffer<_>.LexemeString
+
+// Reserved words.
+let reserved =
+      [ ("fun",   FUN)
+      ; ("match", MATCH)
+      ; ("with",  WITH)
+      ; ("type",  TYPE)
+      ; ("of",    OF)
+      ; ("let",   LET)
+      ; ("rec",   REC)
+      ; ("unit",  UNIT)
+      ; ("not",   NOT)] |> Map.ofList
+
+// Symbols.
+let symbols =
+      [ ("?",  HOLE)
+      ; ("|>", REFINES)
+      ; ("=",  EQUAL)
+      ; ("->", ARROW)
+      ; (",",  COMMA)
+      ; (":",  COLON)
+      ; (";",  SEMI)
+      ; ("*",  STAR)
+      ; ("|",  PIPE)
+      ; ("(",  LPAREN)
+      ; (")",  RPAREN)
+      ; ("[",  LBRACKET)
+      ; ("]",  RBRACKET)
+      ; ("/\\", AND)
+      ; ("\\/", OR)] |> Map.ofList
+
+// Create a token.
+let create_token lexbuf =
+    let str = lexeme lexbuf
+    if reserved.ContainsKey(str) then reserved.[str] else LID str
+
+// Create a symbol.
+let create_symbol lexbuf =
+    let str = lexeme lexbuf
+    if symbols.ContainsKey(str) then symbols.[str]
+    else raise (LexErr (sprintf "Unexpected token: %s" str))
+
+// Create a projection.
+let create_proj lexbuf =
+    let str = lexeme lexbuf in
+    PROJ (System.Int32.Parse str.[1..])
+
+}
+
+let newline    = '\n' | ('\r' '\n') | '\r'
+let tick       = '\''
+let whitespace = ['\t' ' ']
+let lowercase  = ['a'-'z']
+let uppercase  = ['A'-'Z']
+let character  = uppercase | lowercase
+let digit      = ['0'-'9']
+
+// Regular expressions
+rule token = parse
+    | eof         { EOF }
+	| digit+      { INT (System.Int32.Parse (lexeme lexbuf))}
+	| "#" digit+  { create_proj lexbuf }
+	| "(*"        { comments 0 lexbuf }
+	| whitespace+ { token lexbuf }
+	| newline+    { token lexbuf }
+	| lowercase (digit | character | '_')*      { create_token lexbuf }
+	| tick lowercase (digit | character | '_')* { TICK (lexeme lexbuf) }
+	| uppercase (digit | character | '_')*      { UID (lexeme lexbuf) }
+	| '?' | "|>" | '=' | "->" | '*' | ',' | "/\\" | "\\/"
+	| ':' | ';' | '|' | '(' | ')' | '[' | ']'  { create_symbol lexbuf } 
+	| _  { raise (LexErr "Unexpected character")}   
+
+and comments level = parse
+    | "*)"     { if level = 0 then (token lexbuf) else (comments (level-1) lexbuf)}
+	| "(*"     { comments (level + 1) lexbuf }
+	| [^ '\n'] { comments level lexbuf }
+	| "\n"     { comments level lexbuf }
+	| eof      { raise (LexErr "Comments are not closed") }

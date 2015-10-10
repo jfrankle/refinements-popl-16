@@ -1,0 +1,6 @@
+﻿type 'a list =
+  | Nil
+  | Cons of 'a * 'a list
+
+let rec map : ('a -> 'b) -> 'a list -> 'b list |>
+    ('a -> 'b) -> /\([] -> [], ['a] -> ['b], ['a; 'a] -> ['b; 'b]) = ?

@@ -1,0 +1,6 @@
+(* Generated Thu Oct  8 20:40:46 2015 *)
+fun (b1:bool) ->
+  fun (b2:bool) ->
+    match b2 with
+    | True u1 -> True
+    | False u1 -> b1

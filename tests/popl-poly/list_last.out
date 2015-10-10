@@ -1,0 +1,7 @@
+(* Generated Thu Oct  8 20:27:08 2015 *)
+fix f1 (l1:'a list) : 'a option ->
+  match l1 with
+  | Nil u1 -> None
+  | Cons t1 -> match f1 (#2 t1) with
+    | None u1 -> Some (#1 t1)
+    | Some p1 -> Some p1

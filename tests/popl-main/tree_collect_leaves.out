@@ -1,0 +1,5 @@
+(* Generated Thu Oct  8 20:40:52 2015 *)
+fix f1 (t1:tree) : list ->
+  match t1 with
+  | L u1 -> Nil
+  | N t2 -> (append (f1 (#1 t2))) (Cons (#2 t2, f1 (#3 t2)))

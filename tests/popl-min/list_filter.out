@@ -1,0 +1,8 @@
+(* Generated Thu Oct  8 20:38:33 2015 *)
+fix f1 (f2:nat -> bool) : list -> list ->
+  fix f3 (l1:list) : list ->
+    match l1 with
+    | Nil u1 -> Nil
+    | Cons t1 -> match f2 (#1 t1) with
+      | True u1 -> Cons (#1 t1, f3 (#2 t1))
+      | False u1 -> f3 (#2 t1)
