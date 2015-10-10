@@ -6,6 +6,12 @@ Dave Walker         (Princeton University)
 Steve Zdancewic     (University of Pennsylvania)
 
 
+0: DEPENDENCIES
+--------------------------------------------------------------------------------
+This repository requires several other packages to run.  On Ubuntu:
+mono-devel, xbuild, nuget, fsharp
+
+
 1: INTRODUCTION
 --------------------------------------------------------------------------------
 Welcome to the implementation of our refinement-based synthesis system.  It
@@ -17,7 +23,7 @@ program.  These programs are written in a subset of OCaml (with an explicit
 describe the syntax and structure of synthesis programs in later sections.
 
 Note that all data in the paper was collected an AWS m4.large instance.  The
-performance on this VM will be scaled down accordingly.
+performance on a VM will be scaled down accordingly.
 
 
 2: FILES
@@ -29,7 +35,6 @@ The main directory stores several files and directories:
      scripts for batch testing of the synthesis system.
   * synthesize.sh: Script that calls the executable for the synthesizer.
   * refinements: Source directory.
-  * packages: F# packages that the system depends on.
   * tests: Benchmarks for the system and baselines for what they should
      synthesize.
 
@@ -59,7 +64,7 @@ functional programming class. The three sets are:
      condensed using the more expressive refinement language in this paper
      including polymorphism.
 
-Names in angle brackets are subdirectories of tests (i.e., tests/popl-min).
+Names listed are subdirectories of tests (i.e., tests/popl-min).
 Each benchmark is stored in a file with extension .ml. Each baseline of the
 result it should produce is stored in a file with extension .out.
 
@@ -68,6 +73,12 @@ result it should produce is stored in a file with extension .out.
 --------------------------------------------------------------------------------
 To compile:
    > make
+
+To clean:
+   > make clean
+
+To clean and remove nuget packages:
+   > make nuke
 
 
 6: EXECUTION
@@ -81,7 +92,8 @@ To execute the synthesizer:
   5. Execute the synthesizer with your chosen file and enumeration strategy:
      > ./synthesize.sh --input [input file] --enum_strategy [strategy]
      For example:
-     > ./synthesize.sh --input tests/popl-main/list-map.ml --enum_strategy union_everywhere_unsound
+     > ./synthesize.sh --input tests/popl-main/list-map.ml
+                       --enum_strategy union_everywhere_unsound
 
 
 7: FLAGS
@@ -281,6 +293,7 @@ r ::=
     | i                  [polymorphic constant: any unused identifier is
                           inferred to be a member of the corresponding
                           polymorphic type]
+    | not(r)             [negation; r must be a singleton]
 
 As an example, we might specify the decrement function with the refinements:
     let dec : nat -> nat |> /\(\/(0, 1) -> 0, 1 -> 2) = ?
