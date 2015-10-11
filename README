@@ -300,7 +300,7 @@ r ::=
     | not(r)             [negation; r must be a singleton]
 
 As an example, we might specify the decrement function with the refinements:
-    let dec : nat -> nat |> /\(\/(0, 1) -> 0, 1 -> 2) = ?
+    let dec : nat -> nat |> /\(\/(0, 1) -> 0, 2 -> 1) = ?
 
 As a polymorphic example, we might specify list map with the refinements:
     let rec map : ('a -> 'b) -> 'a list -> 'b list |>
