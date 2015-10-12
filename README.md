@@ -34,7 +34,7 @@ performance on a VM will be scaled down accordingly.
 The main directory stores several files and directories:
   * `refinements.sln`: The F# solution file for the project.
   * `Makefile`: Makefile for building/cleaning the executable.
-  * `check-baseline.p`y, generate-baseline.py, collect-data.py: Python
+  * `check-baseline.py, generate-baseline.py, collect-data.py`: Python
      scripts for batch testing of the synthesis system.
   * `synthesize.sh`: Script that calls the executable for the synthesizer.
   * `refinements`: Source directory.
@@ -82,7 +82,7 @@ To clean and remove nuget packages:
 
 ## EXECUTION
 To execute the synthesizer:
-  1. Begin in the top-level directory (you should see the files in section 2).
+  1. Begin in the top-level directory (you should see the files in section `FILES`).
   2. If you have not compiled already, compile.
  
     > make
@@ -153,10 +153,44 @@ multiple baselines at once.
 
 To run collect-data.py:
 
-    > python collect-baselines.py ./synthesize.sh [test(s)]
+    > python collect-baselines.py ./synthesize.sh [test(s)] [enumeration strategy]
 
 where [test(s)] is the path to a single test or a directory of tests to collect
-data on at once.
+data on at once and [enumeration strategy] is the chosen enumeration strategy.
+
+To reproduce the results from Figure 11 (results are formatted with the
+--time flag set to `data`):
+
+Strategy 1:
+
+    > python collect-data.py ./synthesize.sh tests/popl-main union_everywhere
+    
+Strategy 2:
+
+    > python collect-data.py ./synthesize.sh tests/popl-main union_at_base
+
+Strategy 3:
+
+    > python collect-data.py ./synthesize.sh tests/popl-main union_everywhere_unsound
+
+Strategy 4:
+
+    > python collect-data.py ./synthesize.sh tests/popl-main raw
+    
+
+To reproduce the results from Figure 12:
+
+Orig:
+
+    > python collect-data.py ./synthesize.sh tests/popl-main raw
+
+Disj:
+
+    > python collect-data.py ./synthesize.sh tests/popl-min raw
+
+Poly:
+
+    > python collect-data.py ./synthesize.sh tests/popl-poly raw
 
 
 ## SYNTHESIS PROBLEM
@@ -307,8 +341,8 @@ let rec function_name : type |> refinement = ?
 Where:
 
   * function_name is the name of the function to be synthesized.
-  * type is the type of the function (as described in section 10)
-  * refinement is a refinement describing the function (see section 13)
+  * type is the type of the function (as described in section `DATATYPE DECLARATIONS`)
+  * refinement is a refinement describing the function (see section `REFINEMENTS`)
 
 ## REFINEMENTS
 A refinement is kind of type that specifies a smaller set of values than the
