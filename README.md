@@ -95,7 +95,7 @@ To execute the synthesizer:
     
      For example:
      
-    > ./synthesize.sh --input tests/popl-main/list-map.ml
+    > ./synthesize.sh --input tests/popl-main/list_map.ml
                       --enum_strategy union_everywhere_unsound
 
 ## FLAGS
@@ -139,21 +139,22 @@ generates test data on stdout with the time flag set to data.
 
 To run generate-baselines.py:
 
-    > python generate-baselines.py ./synthesize.sh [test(s)]
+    > python generate-baseline.py ./synthesize.sh [test(s)]
 
 where [test(s)] is the path to a single test or a directory of tests to generate
 multiple baselines at once.
 
 To run check-baselines.py:
 
-    > python check-baselines.py ./synthesize.sh [test(s)]
+    > python check-baseline.py ./synthesize.sh [test(s)]
 
 where [test(s)] is the path to a single test or a directory of tests to check
-multiple baselines at once.
+multiple baselines at once.  This script produces a diff of the current output
+and the existing baseline.
 
 To run collect-data.py:
 
-    > python collect-baselines.py ./synthesize.sh [test(s)] [enumeration strategy]
+    > python collect-data.py ./synthesize.sh [test(s)] [enumeration strategy]
 
 where [test(s)] is the path to a single test or a directory of tests to collect
 data on at once and [enumeration strategy] is the chosen enumeration strategy.
