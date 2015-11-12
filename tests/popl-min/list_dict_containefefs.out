@@ -1,0 +1,28 @@
+(* Generated Wed Nov 11 21:58:33 2015 *)
+An error was raised by this test: 1
+
+Unhandled Exception:
+System.IO.FileNotFoundException: Could not find file "/home/popl/Desktop/refinements-popl-16/tests/popl-min/list_dict_containefefs.ml".
+File name: '/home/popl/Desktop/refinements-popl-16/tests/popl-min/list_dict_containefefs.ml'
+  at System.IO.FileStream..ctor (System.String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize, Boolean anonymous, FileOptions options) [0x00000] in <filename unknown>:0 
+  at System.IO.FileStream..ctor (System.String path, FileMode mode, FileAccess access, FileShare share) [0x00000] in <filename unknown>:0 
+  at (wrapper remoting-invoke-with-check) System.IO.FileStream:.ctor (string,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare)
+  at System.IO.File.OpenRead (System.String path) [0x00000] in <filename unknown>:0 
+  at System.IO.StreamReader..ctor (System.String path, System.Text.Encoding encoding, Boolean detectEncodingFromByteOrderMarks, Int32 bufferSize) [0x00000] in <filename unknown>:0 
+  at System.IO.StreamReader..ctor (System.String path) [0x00000] in <filename unknown>:0 
+  at (wrapper remoting-invoke-with-check) System.IO.StreamReader:.ctor (string)
+  at Synth.Run.ReadFile (System.String filename) [0x00000] in <filename unknown>:0 
+  at Synth.Run.Run (System.String inputfile, Microsoft.FSharp.Core.FSharpOption`1 outputfile, Synth.RunMode mode, Boolean verbose, Synth.SampleMode sampling, Synth.enum_strategy enum_strategy, Boolean inhabit_check, Synth.Timing print_time) [0x00000] in <filename unknown>:0 
+  at Synth.Main.main (System.String[] argv) [0x00000] in <filename unknown>:0 
+[ERROR] FATAL UNHANDLED EXCEPTION: System.IO.FileNotFoundException: Could not find file "/home/popl/Desktop/refinements-popl-16/tests/popl-min/list_dict_containefefs.ml".
+File name: '/home/popl/Desktop/refinements-popl-16/tests/popl-min/list_dict_containefefs.ml'
+  at System.IO.FileStream..ctor (System.String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize, Boolean anonymous, FileOptions options) [0x00000] in <filename unknown>:0 
+  at System.IO.FileStream..ctor (System.String path, FileMode mode, FileAccess access, FileShare share) [0x00000] in <filename unknown>:0 
+  at (wrapper remoting-invoke-with-check) System.IO.FileStream:.ctor (string,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare)
+  at System.IO.File.OpenRead (System.String path) [0x00000] in <filename unknown>:0 
+  at System.IO.StreamReader..ctor (System.String path, System.Text.Encoding encoding, Boolean detectEncodingFromByteOrderMarks, Int32 bufferSize) [0x00000] in <filename unknown>:0 
+  at System.IO.StreamReader..ctor (System.String path) [0x00000] in <filename unknown>:0 
+  at (wrapper remoting-invoke-with-check) System.IO.StreamReader:.ctor (string)
+  at Synth.Run.ReadFile (System.String filename) [0x00000] in <filename unknown>:0 
+  at Synth.Run.Run (System.String inputfile, Microsoft.FSharp.Core.FSharpOption`1 outputfile, Synth.RunMode mode, Boolean verbose, Synth.SampleMode sampling, Synth.enum_strategy enum_strategy, Boolean inhabit_check, Synth.Timing print_time) [0x00000] in <filename unknown>:0 
+  at Synth.Main.main (System.String[] argv) [0x00000] in <filename unknown>:0 

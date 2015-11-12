@@ -1,0 +1,9 @@
+(* Generated Wed Nov 11 22:01:46 2015 *)
+fix f1 (f2:'a -> 'a -> bool) : 'a -> 'a * 'b list -> bool ->
+  fix f3 (p1:'a) : 'a * 'b list -> bool ->
+    fix f4 (l1:'a * 'b list) : bool ->
+      match l1 with
+      | Nil u1 -> False
+      | Cons t1 -> match (f2 p1) (#1 (#1 t1)) with
+        | True u1 -> True
+        | False u1 -> f4 (#2 t1)
